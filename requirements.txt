@@ -1,0 +1,4 @@
+Gooey
+faster-whisper
+ctranslate2
+sentencepiece
