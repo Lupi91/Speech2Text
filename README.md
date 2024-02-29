@@ -1,4 +1,5 @@
 **Simple GUI for Speech2Text using Faster-Whisper and optionally translation using CTranslate2 / NLLB**
+![](/Demo.png?raw=true)
 
 ## Setup
 ```
