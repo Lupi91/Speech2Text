@@ -15,7 +15,8 @@ def translate2(source_sents, sp, translator):
     source_sentences = [source_sents]
 
     src_lang = "eng_Latn"
-    tgt_lang = "deu_Latn"
+    tgt_lang = "deu_Latn" # default output is German
+    # List of language codes, see: https://github.com/facebookresearch/flores/blob/main/flores200/README.md#languages-in-flores-200
 
     beam_size = 5
 
@@ -40,10 +41,6 @@ def translate2(source_sents, sp, translator):
 
 
 def main(model, input, output, task):
-    print("*** FASTER-WHISPER - Speech Recognition ***")
-    print("https://github.com/guillaumekln/faster-whisper")
-    print("https://opennmt.net/CTranslate2/quickstart.html")
-    print("")
     model_dir = "models/whisper_medium"
     if model == "large":
         model_dir = "models/whisper_large"
@@ -97,8 +94,6 @@ def main(model, input, output, task):
         RESULT = []
         TRANSLATION = []
         for segment in segments:
-            #print("(%s/%s) [%.2fs -> %.2fs] %s" % (idx+1, len(input_files), segment.start, segment.end, segment.text))
-            #RESULT.append(segment.text[1:])
             if task == "translate":
                 translated_str = translate2(segment.text[1:], sp, translator)
                 print("(%s/%s) [%.2fs -> %.2fs] %s:" % (idx+1, len(input_files), segment.start, segment.end, translated_str))
@@ -132,9 +127,9 @@ def main(model, input, output, task):
     print("Elapsed time:", round((t2-t1), 2))
 
 from gooey import Gooey, GooeyParser
-@Gooey(program_name="FASTER-WHISPER", required_cols=1, optional_cols=1)
+@Gooey(program_name="FASTER-WHISPER / CTranslate2 NLLB", required_cols=1, optional_cols=1)
 def parse_args():   
-    parser = GooeyParser(description="Speech Recognition") 
+    parser = GooeyParser(description="Speech Recognition / Translation") 
     parser.add_argument("-i", "--input", required=True, nargs='*', help="Select audio or video file/s", widget="MultiFileChooser")
     parser.add_argument("-o", "--output", required=False, help='output directory [default = input directory]', widget="DirChooser")
     parser.add_argument("-m", "--model", choices=["medium", "large"], default="medium", help="choose model type")
