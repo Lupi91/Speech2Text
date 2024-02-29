@@ -8,11 +8,11 @@ Tested with WinPython 3.11 and CUDA V11.7.64
 
 
 ## Download models
-**1. NLLB**
+**1. NLLB**<br>
 https://pretrained-nmt-models.s3.us-west-2.amazonaws.com/CTranslate2/nllb/nllb-200_600M_int8_ct2.zip<br>
 Unzip to "models/NLLB"<br>
 
-**2. WHISPER**
+**2. WHISPER**<br>
 Download "config.json", "model.bin", "tokenizer.json" and "vocabulary.txt" from:<br>
 https://huggingface.co/Systran/faster-whisper-medium/tree/main<br>
 and<br>
@@ -22,6 +22,6 @@ place the medium model files inside "models/whisper_medium"
 place the large model files inside "models/whisper_large"
 
 
-## References
-Faster-Whisper: https://github.com/SYSTRAN/faster-whisper
-NLLB 200 with CTranslate2: https://forum.opennmt.net/t/nllb-200-with-ctranslate2/5090
+## References<br>
+- Faster-Whisper: https://github.com/SYSTRAN/faster-whisper
+- NLLB 200 with CTranslate2: https://forum.opennmt.net/t/nllb-200-with-ctranslate2/5090
