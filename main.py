@@ -1,4 +1,3 @@
-import argparse
 from pathlib import Path
 import sys
 import os
@@ -7,9 +6,11 @@ from time import perf_counter
 from faster_whisper import WhisperModel
 import ctranslate2
 import sentencepiece as spm
+os.environ["CT2_VERBOSE"] = "-1"    # -1 = error https://opennmt.net/CTranslate2/environment_variables.html
 
 ct_model_path = "models/NLLB/nllb-200-distilled-600M-int8"
 sp_model_path = "models/NLLB/flores200_sacrebleu_tokenizer_spm.model"
+
 
 def translate2(source_sents, sp, translator):
     source_sentences = [source_sents]
@@ -46,10 +47,15 @@ def main(model, input, output, task):
         model_dir = "models/whisper_large"
     print("Loading whisper model...")
     try:
-        model = WhisperModel(model_dir) # base, medium
-    except Exception as e:
-        print(e)
-        sys.exit(1)
+        model = WhisperModel(model_dir, device="cuda")
+        print("Whisper ready - CUDA enabled!")
+    except:
+        try:
+            model = WhisperModel(model_dir, device="cpu")
+            print("Whisper ready - CPU enabled!")
+        except Exception as e:
+            print(e)
+            sys.exit(1)
     
     if task == "translate":
         try:
@@ -63,33 +69,37 @@ def main(model, input, output, task):
         try:
             print("Loading translator model...")
             translator = ctranslate2.Translator(ct_model_path, device="cuda")
-            print("CUDA enabled!")
+            print("Translator ready - CUDA enabled!")
         except:
             try:
                 translator = ctranslate2.Translator(ct_model_path, device="cpu")
-                print("CPU enabled!")
+                print("Translator ready - CPU enabled!")
             except Exception as e:
                 print(e)
                 sys.exit(1)
 
-    print("")
     print("\nRunning Speech Recognition...")
     print("")
     t1 = perf_counter() 
     RESULT_FILES = []
     
     input_files = [x for x in input]
+    
     for idx, f in enumerate(input_files):
         try:
-            print("_____________________________________________________________")
-            print(f"Processing: {f}")
             segments, info = model.transcribe(f, beam_size=5, task=task)
-            print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
-        
         except Exception as e:
             print("(%s/%s) ERROR processing file: %s" % (idx+1, len(input_files), f))
+            print(e)
             print("")
-
+            if idx == len(input) - 1:
+                #sys.exit(1)
+                break
+            else:
+                continue
+        print("_____________________________________________________________")
+        print(f"Processing: {f}")
+        print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
 
         RESULT = []
         TRANSLATION = []
@@ -125,6 +135,7 @@ def main(model, input, output, task):
     for i in RESULT_FILES:
         print("Output:", i)
     print("Elapsed time:", round((t2-t1), 2))
+
 
 from gooey import Gooey, GooeyParser
 @Gooey(program_name="FASTER-WHISPER / CTranslate2 NLLB", required_cols=1, optional_cols=1)
