@@ -22,7 +22,10 @@ https://huggingface.co/Systran/faster-whisper-large-v2/tree/main<br>
 - place the medium model files inside "models/whisper_medium"
 - place the large model files inside "models/whisper_large"
 
-## Default Translation
+## Default Translation (target language)
+```
+Line 19: tgt_lang = "deu_Latn"
+```
 - default is German: "deu_Latn"
 - List of language codes, see: https://github.com/facebookresearch/flores/blob/main/flores200/README.md#languages-in-flores-200
 
