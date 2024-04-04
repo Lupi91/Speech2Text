@@ -1,5 +1,4 @@
-**Simple GUI for Speech2Text using Faster-Whisper and optionally translation using CTranslate2 / NLLB**
-<br>
+**Simple GUI for Speech2Text using Faster-Whisper and optionally translation using CTranslate2 / NLLB**<br>
 ![](/Demo.png?raw=true)
 
 ## Setup
@@ -11,9 +10,9 @@ Tested with WinPython 3.11 and CUDA V11.7
 
 ## Download models
 The download_models.py will automatically download the required models from Hugging Face.
-'''
+```
 python download_models.py
-'''
+```
 
 ## Default Translation (target language)
 To change the default language, edit "config/init_lang.txt". <br>
