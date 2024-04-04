@@ -3,3 +3,4 @@ CTkListbox
 faster-whisper
 ctranslate2==3.24.0
 sentencepiece
+huggingface_hub
