@@ -1,4 +1,5 @@
-Gooey
+customtkinter
+CTkListbox
 faster-whisper
-ctranslate2
+ctranslate2==3.24.0
 sentencepiece
