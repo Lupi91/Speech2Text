@@ -19,6 +19,9 @@ To change the default language, edit "config/init_lang.txt". Replace "German" wi
 https://github.com/facebookresearch/flores/blob/main/flores200/README.md#languages-in-flores-200 <br>
 Do not touch the other txt-files! <br>
 
+## GPU Execution (CUDA)
+GPU execution requires the following NVIDIA libraries to be installed: <br>
+- cuBLAS and cuDNN for CUDA 11 <br>
 
 ## References<br>
 - Faster-Whisper: https://github.com/SYSTRAN/faster-whisper
