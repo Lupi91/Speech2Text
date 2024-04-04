@@ -15,9 +15,10 @@ python download_models.py
 ```
 
 ## Default Translation (target language)
-To change the default language, edit "config/init_lang.txt". <br>
-Replace "German" with a language listed here: <br>
-https://github.com/facebookresearch/flores/blob/main/flores200/README.md#languages-in-flores-200
+To change the default language, edit "config/init_lang.txt". Replace "German" with a language listed here: <br>
+https://github.com/facebookresearch/flores/blob/main/flores200/README.md#languages-in-flores-200 <br>
+Do not touch the other txt-files! <br>
+
 
 ## References<br>
 - Faster-Whisper: https://github.com/SYSTRAN/faster-whisper
