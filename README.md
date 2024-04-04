@@ -1,33 +1,24 @@
 **Simple GUI for Speech2Text using Faster-Whisper and optionally translation using CTranslate2 / NLLB**
+<br>
 ![](/Demo.png?raw=true)
 
 ## Setup
 ```
 pip install -r requirements.txt
 ```
-Tested with WinPython 3.11 and CUDA V11.7.64
+Tested with WinPython 3.11 and CUDA V11.7
 
 
 ## Download models
-**1. NLLB**<br>
-https://pretrained-nmt-models.s3.us-west-2.amazonaws.com/CTranslate2/nllb/nllb-200_600M_int8_ct2.zip<br>
-- unzip to "models/NLLB"<br>
-
-**2. WHISPER**<br>
-Download "config.json", "model.bin", "tokenizer.json" and "vocabulary.txt" from:<br>
-https://huggingface.co/Systran/faster-whisper-medium/tree/main<br>
-and<br>
-https://huggingface.co/Systran/faster-whisper-large-v2/tree/main<br>
-
-- place the medium model files inside "models/whisper_medium"
-- place the large model files inside "models/whisper_large"
+The download_models.py will automatically download the required models from Hugging Face.
+'''
+python download_models.py
+'''
 
 ## Default Translation (target language)
-```
-Line 19: tgt_lang = "deu_Latn"
-```
-- default is German: "deu_Latn"
-- List of language codes, see: https://github.com/facebookresearch/flores/blob/main/flores200/README.md#languages-in-flores-200
+To change the default language, edit "config/init_lang.txt". <br>
+Replace "German" with a language listed here: <br>
+https://github.com/facebookresearch/flores/blob/main/flores200/README.md#languages-in-flores-200
 
 ## References<br>
 - Faster-Whisper: https://github.com/SYSTRAN/faster-whisper
