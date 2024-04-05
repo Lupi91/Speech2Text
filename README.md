@@ -19,12 +19,12 @@ GPU execution requires the following NVIDIA libraries to be installed: <br>
 - cuBLAS and cuDNN for CUDA 11 <br>
 
 ## Default Translation (target language)
-<br> The default language is loaded from "config/init_lang.txt". Replace "German" with a language listed here: <br>
+The default language is loaded from "config/init_lang.txt". Replace "German" with a language listed here: <br>
 https://github.com/facebookresearch/flores/blob/main/flores200/README.md#languages-in-flores-200 <br>
 Do not touch the other txt-files! <br>
 <br>![](/Translation1.png?raw=true)
 <br>
-<br> To change the target language during runtime, just filter the listbox:
+<br> You can change the target language during runtime, use the entry widget to filter the listbox. <br>
 <br>![](/Translation2.png?raw=true)
 
 ## References<br>
