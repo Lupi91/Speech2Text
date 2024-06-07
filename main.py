@@ -3,12 +3,16 @@ import os
 from time import perf_counter
 
 import customtkinter as ctk
-from customtkinter import StringVar
+#from customtkinter import StringVar
 import tkinter as tk
 from CTkListbox import *
 from faster_whisper import WhisperModel
 import ctranslate2
 import sentencepiece as spm
+
+import srt
+import datetime
+import time
 
 ct_model_path = "models/NLLB/nllb-200-distilled-600M-int8"
 sp_model_path = "models/NLLB/flores200_sacrebleu_tokenizer_spm.model"
@@ -35,7 +39,9 @@ def translate2(source_sents, sp, translator, tgt_lang, beam_size):
 
         # Desubword the target sentences
         translations = sp.decode(translations_subworded)
-        return translations
+        #return translations
+        return translations[0]
+    
     except:
         return "ERROR"
 
@@ -56,7 +62,7 @@ class App(ctk.CTk):
         self.title("Faster-Whisper-Translator")
         self.resizable(False,False)
         ctk.set_default_color_theme("dark-blue")
-        self.grid_rowconfigure(8, weight=1)
+        self.grid_rowconfigure(9, weight=1)
         self.grid_columnconfigure((0, 1, 2, 3), weight=1)
 
         # ROW0: load files button
@@ -70,7 +76,7 @@ class App(ctk.CTk):
         self.input_files.grid(row=1, columnspan=4, padx=20, pady=5, sticky="nsew")
         
         # ROW2: task
-        self.rb_task_var = StringVar()
+        self.rb_task_var = ctk.StringVar()
         self.rb3 = ctk.CTkRadioButton(self, text="transcribe", variable=self.rb_task_var, value="transcribe", command=self.radiobutton_event)
         self.rb4 = ctk.CTkRadioButton(self, text="translate", variable=self.rb_task_var, value="translate", command=self.radiobutton_event)
         self.rb3.grid(row=2, column=0, columnspan=1, padx=20, pady=10, sticky="nsew")
@@ -124,14 +130,29 @@ class App(ctk.CTk):
         
         # disable the translate widgets
         self.radiobutton_event()
+
+
+        # output options
+        #self.label6 = ctk.CTkLabel(self, text="output options", font=ctk.CTkFont(weight="bold"), anchor="w", justify="left")
+        #self.label6.grid(row=7, column=0, padx=20, pady=10, sticky="nw")
+        #self.cb_txt = ctk.StringVar(value="on")
+        #self.cb1 = ctk.CTkCheckBox(self, text="txt", variable=self.cb_txt, onvalue="on", offvalue="off")
+        #self.cb1.grid(row=7, column=1, padx=20, pady=10, sticky="nsew")
+        self.cb_csv = ctk.StringVar(value="on")
+        self.cb2 = ctk.CTkCheckBox(self, text="csv", variable=self.cb_csv, onvalue="on", offvalue="off")
+        self.cb2.grid(row=7, column=0, padx=20, pady=10, sticky="nsew")
+        self.cb_srt = ctk.StringVar(value="off")
+        self.cb3 = ctk.CTkCheckBox(self, text="srt", variable=self.cb_srt, onvalue="on", offvalue="off")
+        self.cb3.grid(row=7, column=1, padx=20, pady=10, sticky="nsew")
         
         # button RUN
         self.transcribebutton = ctk.CTkButton(self, command=self.transcribe_button, height=50, text="Run", font=ctk.CTkFont(family="Verdana", size=14,weight="bold"))
-        self.transcribebutton.grid(row=7, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
+        self.transcribebutton.grid(row=8, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
+        
         
         # console / logging widget
         self.console = ctk.CTkTextbox(self)
-        self.console.grid(row=8, column=0, columnspan=4, padx=20, pady=10, sticky="nsew")
+        self.console.grid(row=9, column=0, columnspan=4, padx=20, pady=10, sticky="nsew")
 
     
     
@@ -199,7 +220,6 @@ class App(ctk.CTk):
             #self.write("File:", self.audio)
         
         # new multiple file load method using a listbox
-        
         files = tk.filedialog.askopenfilename(title="Select File/s", multiple=True)
         # start index = actual number of items in listbox
         # avoid overwriting, allow user to load files multiple times
@@ -207,7 +227,6 @@ class App(ctk.CTk):
         for idx, f in enumerate(files):
             self.input_files.insert((idx + existing_items), f)
             self.audio.append(f)
-            
             
 
     def transcribe_button(self):
@@ -285,18 +304,56 @@ class App(ctk.CTk):
                     continue
             
             RESULT = []
+            RESULT_CSV = []
             TRANSLATION = []
+            SUBTITLES = []
+            
             self.write("Detected language '%s' with probability %f" % (info.language, info.language_probability))
             for segment in segments:
                 self.write("(%s/%s) [%.2fs -> %.2fs] %s" % (idx+1, len(self.audio), segment.start, segment.end, segment.text))
                 RESULT.append(segment.text[1:])
+                
                 if self.rb_task_var.get() == "translate":
                     translated_str = translate2(segment.text[1:], sp, translator, tgt_lang, int(self.beamsize.get()))
                     TRANSLATION.append(translated_str)
+                    #self.write("[translation] %s" % (translated_str))
+                
+                if self.cb_csv.get() == "on":
+                    #start_time = datetime.timedelta(milliseconds=segment.start * 1000)
+                    #end_time = datetime.timedelta(milliseconds=segment.end * 1000)
+                    start_time = time.strftime('%H:%M:%S', time.gmtime(segment.start))
+                    end_time = time.strftime('%H:%M:%S', time.gmtime(segment.end))
 
+                    if self.rb_task_var.get() == "translate":
+                        #RESULT_CSV.append("%.2fs;%.2fs;%s;%s" % (segment.start, segment.end, segment.text[1:], translated_str))
+                        RESULT_CSV.append("%s;%s;%s;%s" % (start_time, end_time, segment.text[1:].replace(";",","), translated_str.replace(";",",")))               
+                    else:    
+                        #RESULT_CSV.append("%.2fs;%.2fs;%s" % (segment.start, segment.end, segment.text[1:]))
+                        RESULT_CSV.append("%s;%s;%s" % (start_time, end_time, segment.text[1:].replace(";",",")))
+
+                # srt generation, credits: https://github.com/IOriens/whisper-video    
+                if self.cb_srt.get() == "on":
+                    i = 0
+                    start_time = datetime.timedelta(milliseconds=segment.start * 1000)
+                    end_time = datetime.timedelta(milliseconds=segment.end * 1000)
+                    if self.rb_task_var.get() == "translate":
+                        #text = translated_str[0]
+                        text = translated_str
+                    else:
+                        text = segment.text.strip()
+                    
+                    if text:
+                        # Create a subtitle object for the segment
+                        subtitle = srt.Subtitle(index=i + 1, start=start_time, end=end_time, content=text)
+                        SUBTITLES.append(subtitle)
+                        i += 1
+
+            
+            # save output
             if any(RESULT):
-                output = os.path.join(os.path.dirname(audio_file), (os.path.basename(audio_file) + "_transcript.txt"))
-                with open(output, "w", encoding='utf-8') as f:
+                txt_output = os.path.join(os.path.dirname(audio_file), (os.path.basename(audio_file) + "_transcript.txt"))
+                #txt_output = os.path.splitext(audio_file)[0] + ".txt"
+                with open(txt_output, "w", encoding='utf-8') as f:
                     for ln in RESULT:
                         f.write("%s\n" % ln)
 
@@ -305,11 +362,26 @@ class App(ctk.CTk):
                         for ln in TRANSLATION:
                             f.write("%s\n" % ln)
 
-                    self.write("\nSaved transcript to " + output)
+                self.write("\nSaved transcript to: \n" + txt_output)
+            
+                
+                if self.cb_csv.get() == "on":
+                    csv_output = os.path.splitext(audio_file)[0] + ".csv"
+                    with open(csv_output, "w", encoding="utf-8-sig") as f:
+                        for ln in RESULT_CSV:
+                            f.write("%s\n" % ln)
+                    self.write(csv_output)
+
+                
+                if self.cb_srt.get() == "on":
+                    srt_output = os.path.splitext(audio_file)[0] + ".srt"
+                    with open(srt_output, "w", encoding="utf-8") as f:
+                        f.write(srt.compose(SUBTITLES))
+                        
+                    self.write(srt_output)
+
             else:
                 self.write("NO SPEECH DETECTED!")
-            
-
         
         self.write("_____________________________________________________________")
         t2 = perf_counter()
