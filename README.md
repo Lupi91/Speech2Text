@@ -3,9 +3,15 @@
 
 ## Setup
 ```
+# on Ubuntu
+sudo apt-get install -y libavformat-dev libavdevice-dev
+
+# install Python dependencies
 pip install -r requirements.txt
 ```
-Tested with WinPython 3.11 and CUDA V11.7
+Tested
+- with WinPython 3.11 and CUDA V11.7
+- on Ubuntu 24.04 with Python 3.12 and CPU
 
 
 ## Download models
