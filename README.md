@@ -1,5 +1,5 @@
 **Simple GUI for Speech2Text using Faster-Whisper and optionally translation using CTranslate2 / NLLB**<br>
-<br>![](/Demo.png?raw=true)
+<br>![](Demo.png?raw=true)
 
 ## Setup
 ```
@@ -28,10 +28,10 @@ GPU execution requires the following NVIDIA libraries to be installed: <br>
 The default language is loaded from "config/init_lang.txt". Replace "German" with a language listed here: <br>
 https://github.com/facebookresearch/flores/blob/main/flores200/README.md#languages-in-flores-200 <br>
 Do not touch the other txt-files! <br>
-<br>![](/Translation1.png?raw=true)
+<br>![](Translation1.png?raw=true)
 <br>
 <br> You can change the target language during runtime, use the entry widget to filter the listbox. <br>
-<br>![](/Translation2.png?raw=true)
+<br>![](Translation2.png?raw=true)
 
 ## References<br>
 - Faster-Whisper: https://github.com/SYSTRAN/faster-whisper
